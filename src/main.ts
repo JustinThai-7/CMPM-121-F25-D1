@@ -1,30 +1,34 @@
 import "./style.css";
 const emojiButton = document.createElement("button");
-emojiButton.innerHTML = "🍪";
+emojiButton.classList.add("mine-button");
+emojiButton.innerHTML = "🪨";
 const counterDisplay = document.createElement("div");
 const growthDisplay = document.createElement("div");
 
 //upgrades
 const firstUpgradeButton = document.createElement("button");
+firstUpgradeButton.classList.add("upgrade-button");
 let price1: number = 10;
 let owned1: number = 0;
-firstUpgradeButton.textContent = `Cheap Auto-Clicker: $${
+firstUpgradeButton.textContent = `Pickaxe: $${
   Math.round(price1 * 100) / 100
 } (Owned: ${owned1})`;
 firstUpgradeButton.disabled = true; // Start disabled
 document.body.append(firstUpgradeButton);
 const secondUpgradeButton = document.createElement("button");
+secondUpgradeButton.classList.add("upgrade-button");
 let price2: number = 100;
 let owned2: number = 0;
-secondUpgradeButton.textContent = `Auto-Clicker: $${
+secondUpgradeButton.textContent = `Drill: $${
   Math.round(price2 * 100) / 100
 } (Owned: ${owned2})`;
 secondUpgradeButton.disabled = true; // Start disabled
 document.body.append(secondUpgradeButton);
 const thirdUpgradeButton = document.createElement("button");
+thirdUpgradeButton.classList.add("upgrade-button");
 let price3: number = 1000;
 let owned3: number = 0;
-thirdUpgradeButton.textContent = `Cheap Auto-Clicker: $${
+thirdUpgradeButton.textContent = `Jackhammer: $${
   Math.round(price3 * 100) / 100
 } (Owned: ${owned3})`;
 thirdUpgradeButton.disabled = true; // Start disabled
@@ -40,7 +44,7 @@ firstUpgradeButton.addEventListener("click", () => { // upgrading
     growthRate += 0.1;
     owned1 += 1;
     price1 = price1 * 1.15;
-    firstUpgradeButton.textContent = `Cheap Auto-Clicker: $${
+    firstUpgradeButton.textContent = `Pickaxe: $${
       Math.round(price1 * 100) / 100
     } (Owned: ${owned1})`;
   }
@@ -51,7 +55,7 @@ secondUpgradeButton.addEventListener("click", () => { // upgrading
     growthRate += 2;
     owned2 += 1;
     price2 = price2 * 1.15;
-    secondUpgradeButton.textContent = `Auto-Clicker: $${
+    secondUpgradeButton.textContent = `Drill: $${
       Math.round(price2 * 100) / 100
     } (Owned: ${owned2})`;
   }
@@ -62,7 +66,7 @@ thirdUpgradeButton.addEventListener("click", () => { // upgrading
     growthRate += 50;
     owned3 += 1;
     price3 = price3 * 1.15;
-    thirdUpgradeButton.textContent = `Deluxe Auto-Clicker: $${
+    thirdUpgradeButton.textContent = `Jackhammer: $${
       Math.round(price3 * 100) / 100
     } (Owned: ${owned3})`;
   }
@@ -71,7 +75,7 @@ thirdUpgradeButton.addEventListener("click", () => { // upgrading
 // clicker listener
 emojiButton.addEventListener("click", () => { // button increments
   counter += 1;
-  counterDisplay.textContent = `${counter} cookies`;
+  counterDisplay.textContent = `${counter} ores`;
 });
 
 // Continuous growth using requestAnimationFrame
@@ -87,8 +91,8 @@ function update(time: number) { // frame by frame increments
   secondUpgradeButton.disabled = counter < 100;
   thirdUpgradeButton.disabled = counter < 1000;
 
-  counterDisplay.textContent = `${counter.toFixed(2)} cookies`;
-  growthDisplay.textContent = `${growthRate} cookies/sec`;
+  counterDisplay.textContent = `${counter.toFixed(2)} ores`;
+  growthDisplay.textContent = `${growthRate} ores/sec`;
   requestAnimationFrame(update);
 }
 
