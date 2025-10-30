@@ -2,75 +2,13 @@ import "./style.css";
 const emojiButton = document.createElement("button");
 emojiButton.classList.add("mine-button");
 emojiButton.innerHTML = "🪨";
+
 const counterDisplay = document.createElement("div");
 const growthDisplay = document.createElement("div");
 
-//upgrades
-const firstUpgradeButton = document.createElement("button");
-firstUpgradeButton.classList.add("upgrade-button");
-let price1: number = 10;
-let owned1: number = 0;
-firstUpgradeButton.textContent = `Pickaxe: $${
-  Math.round(price1 * 100) / 100
-} (Owned: ${owned1})`;
-firstUpgradeButton.disabled = true; // Start disabled
-document.body.append(firstUpgradeButton);
-const secondUpgradeButton = document.createElement("button");
-secondUpgradeButton.classList.add("upgrade-button");
-let price2: number = 100;
-let owned2: number = 0;
-secondUpgradeButton.textContent = `Drill: $${
-  Math.round(price2 * 100) / 100
-} (Owned: ${owned2})`;
-secondUpgradeButton.disabled = true; // Start disabled
-document.body.append(secondUpgradeButton);
-const thirdUpgradeButton = document.createElement("button");
-thirdUpgradeButton.classList.add("upgrade-button");
-let price3: number = 1000;
-let owned3: number = 0;
-thirdUpgradeButton.textContent = `Jackhammer: $${
-  Math.round(price3 * 100) / 100
-} (Owned: ${owned3})`;
-thirdUpgradeButton.disabled = true; // Start disabled
-document.body.append(thirdUpgradeButton);
-
+const priceFactor = 1.15;
 let counter: number = 0;
 let growthRate: number = 0; // units per second
-
-// upgrade event listeners
-firstUpgradeButton.addEventListener("click", () => { // upgrading
-  if (counter >= price1) {
-    counter -= price1;
-    growthRate += 0.1;
-    owned1 += 1;
-    price1 = price1 * 1.15;
-    firstUpgradeButton.textContent = `Pickaxe: $${
-      Math.round(price1 * 100) / 100
-    } (Owned: ${owned1})`;
-  }
-});
-secondUpgradeButton.addEventListener("click", () => { // upgrading
-  if (counter >= 100) {
-    counter -= 100;
-    growthRate += 2;
-    owned2 += 1;
-    price2 = price2 * 1.15;
-    secondUpgradeButton.textContent = `Drill: $${
-      Math.round(price2 * 100) / 100
-    } (Owned: ${owned2})`;
-  }
-});
-thirdUpgradeButton.addEventListener("click", () => { // upgrading
-  if (counter >= 1000) {
-    counter -= 1000;
-    growthRate += 50;
-    owned3 += 1;
-    price3 = price3 * 1.15;
-    thirdUpgradeButton.textContent = `Jackhammer: $${
-      Math.round(price3 * 100) / 100
-    } (Owned: ${owned3})`;
-  }
-});
 
 // clicker listener
 emojiButton.addEventListener("click", () => { // button increments
@@ -78,21 +16,71 @@ emojiButton.addEventListener("click", () => { // button increments
   counterDisplay.textContent = `${counter} ores`;
 });
 
-// Continuous growth using requestAnimationFrame
-let previousTime: number = performance.now();
+interface UpgradeItem {
+  name: string;
+  baseCost: number;
+  rate: number;
+  cost: number; // current cost (increases with purchases)
+  owned: number; // how many the player owns
+}
 
+const availableItems: UpgradeItem[] = [
+  { name: "Pickaxe", baseCost: 10, rate: 0.1, cost: 10, owned: 0 },
+  { name: "Drill", baseCost: 100, rate: 2, cost: 100, owned: 0 },
+  { name: "Jackhammer", baseCost: 500, rate: 50, cost: 500, owned: 0 },
+];
+
+const upgradesContainer = document.createElement("div");
+upgradesContainer.classList.add("upgrades-container");
+document.body.append(upgradesContainer);
+
+// initializing buttons
+const upgradeButtons: HTMLButtonElement[] = [];
+
+for (const item of availableItems) {
+  const button = document.createElement("button");
+  button.classList.add("upgrade-button");
+  button.disabled = true;
+  updateButtonText(button, item);
+  upgradesContainer.append(button);
+  upgradeButtons.push(button);
+}
+function updateButtonText(button: HTMLButtonElement, item: UpgradeItem) {
+  button.textContent = `${item.name}: $${
+    Math.round(item.cost * 100) / 100
+  } (Owned: ${item.owned})`;
+}
+
+for (let i = 0; i < availableItems.length; i++) {
+  const item = availableItems[i];
+  const button = upgradeButtons[i];
+
+  button.addEventListener("click", () => {
+    if (counter >= item.cost) {
+      counter -= item.cost;
+      growthRate += item.rate;
+      item.owned += 1;
+      item.cost = item.cost * priceFactor; // increase price
+
+      updateButtonText(button, item);
+    }
+  });
+}
+
+let previousTime: number = performance.now();
 function update(time: number) { // frame by frame increments
   const deltaTime = (time - previousTime) / 1000; // seconds
   previousTime = time;
 
   counter += growthRate * deltaTime;
 
-  firstUpgradeButton.disabled = counter < 10;
-  secondUpgradeButton.disabled = counter < 100;
-  thirdUpgradeButton.disabled = counter < 1000;
+  counterDisplay.textContent = `$${counter.toFixed(2)} of ore`;
+  growthDisplay.textContent = `$${growthRate.toFixed(2)} profit/sec`;
 
-  counterDisplay.textContent = `${counter.toFixed(2)} ores`;
-  growthDisplay.textContent = `${growthRate} ores/sec`;
+  for (let i = 0; i < availableItems.length; i++) { // check if any upgrades can be bought
+    upgradeButtons[i].disabled = counter < availableItems[i].cost;
+  }
+
   requestAnimationFrame(update);
 }
 
