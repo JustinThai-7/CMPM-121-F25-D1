@@ -15,12 +15,27 @@
 }
 
 .upgrade-button {
-  font-size: 14px;
-  padding: 8px 12px;
-  margin: 5px;
+  font-size: 18px;
+  padding: 12px 18px;
+  margin: 8px;
   display: inline-block;
 }
 
 body {
   text-align: center;
+  /* https://www.storyblocks.com/images/stock/grey-stone-minecraft-pattern-b7uepfipxuzj6gtrijk */
+  background-image: url("./assets/minecraft-pattern.jpg");
+  background-repeat: repeat;
+  color: white; /* Ensure text is visible on dark background */
+}
+
+.count-display {
+  font-size: 32px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.growth-display {
+  font-size: 24px;
+  margin-bottom: 20px;
 }

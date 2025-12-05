@@ -5,7 +5,9 @@ const emojiButton = document.createElement("button");
 emojiButton.classList.add("mine-button");
 emojiButton.innerHTML = "🪨";
 const counterDisplay = document.createElement("div");
+counterDisplay.classList.add("count-display");
 const growthDisplay = document.createElement("div");
+growthDisplay.classList.add("growth-display");
 
 // Game State
 const priceFactor = 1.15;
@@ -26,6 +28,7 @@ interface UpgradeItem {
   cost: number; // current cost (increases with purchases)
   owned: number; // how many the player owns
   description: string;
+  emoji: string;
 }
 
 const availableItems: UpgradeItem[] = [
@@ -36,6 +39,7 @@ const availableItems: UpgradeItem[] = [
     cost: 10,
     owned: 0,
     description: "The tool that starts it all.",
+    emoji: "⛏️",
   },
   {
     name: "Drill",
@@ -44,6 +48,7 @@ const availableItems: UpgradeItem[] = [
     cost: 50,
     owned: 0,
     description: "Mine deeper, faster.",
+    emoji: "🔩",
   },
   {
     name: "Excavator",
@@ -52,6 +57,7 @@ const availableItems: UpgradeItem[] = [
     cost: 100,
     owned: 0,
     description: "Things are starting to get fun.",
+    emoji: "🚜",
   },
   {
     name: "Blast Charge",
@@ -60,6 +66,7 @@ const availableItems: UpgradeItem[] = [
     cost: 500,
     owned: 0,
     description: "More bang for your buck.",
+    emoji: "🧨",
   },
   {
     name: "Auto-Miner",
@@ -68,6 +75,7 @@ const availableItems: UpgradeItem[] = [
     cost: 2000,
     owned: 0,
     description: "Passive income.",
+    emoji: "🤖",
   },
 ];
 
@@ -76,7 +84,7 @@ upgradesContainer.classList.add("upgrades-container");
 document.body.append(upgradesContainer);
 
 function updateUpgradeButtonText(button: HTMLButtonElement, item: UpgradeItem) {
-  button.textContent = `${item.name}: $${
+  button.textContent = `${item.emoji} ${item.name}: $${
     Math.round(item.cost * 100) / 100
   } (Owned: ${item.owned})`;
 }
