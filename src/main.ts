@@ -1,21 +1,24 @@
 import "./style.css";
 
+// DOM Setup
 const emojiButton = document.createElement("button");
 emojiButton.classList.add("mine-button");
 emojiButton.innerHTML = "🪨";
 const counterDisplay = document.createElement("div");
 const growthDisplay = document.createElement("div");
 
+// Game State
 const priceFactor = 1.15;
 let counter: number = 0;
 let growthRate: number = 0; // units per second
 
-// Clicker listener
+// Event Listeners
 emojiButton.addEventListener("click", () => {
   counter += 1;
   counterDisplay.textContent = `${counter} ores`;
 });
 
+// Upgrade System
 interface UpgradeItem {
   name: string;
   baseCost: number;
@@ -72,39 +75,40 @@ const upgradesContainer = document.createElement("div");
 upgradesContainer.classList.add("upgrades-container");
 document.body.append(upgradesContainer);
 
-// create buttons
-const upgradeButtons: HTMLButtonElement[] = [];
-for (const item of availableItems) {
-  const button = document.createElement("button");
-  button.classList.add("upgrade-button");
-  button.disabled = true;
-  button.title = item.description; // tooltip on hover
-  updateButtonText(button, item);
-  upgradesContainer.append(button);
-  upgradeButtons.push(button);
-}
-
-function updateButtonText(button: HTMLButtonElement, item: UpgradeItem) {
+function updateUpgradeButtonText(button: HTMLButtonElement, item: UpgradeItem) {
   button.textContent = `${item.name}: $${
     Math.round(item.cost * 100) / 100
   } (Owned: ${item.owned})`;
 }
 
-// init listeners for buttons
+// Create UI Controls
+const uiControls: HTMLButtonElement[] = [];
+for (const item of availableItems) {
+  const button = document.createElement("button");
+  button.classList.add("upgrade-button");
+  button.disabled = true;
+  button.title = item.description; // tooltip on hover
+  updateUpgradeButtonText(button, item);
+  upgradesContainer.append(button);
+  uiControls.push(button);
+}
+
+// Init listeners for buttons
 for (let i = 0; i < availableItems.length; i++) {
   const item = availableItems[i];
-  const button = upgradeButtons[i];
+  const button = uiControls[i];
   button.addEventListener("click", () => {
     if (counter >= item.cost) {
       counter -= item.cost;
       growthRate += item.rate;
       item.owned += 1;
       item.cost = item.cost * priceFactor;
-      updateButtonText(button, item);
+      updateUpgradeButtonText(button, item);
     }
   });
 }
 
+// Animation Loop
 let previousTime: number = performance.now();
 function update(time: number) {
   const deltaTime = (time - previousTime) / 1000;
@@ -117,7 +121,7 @@ function update(time: number) {
 
   // check if upgrades can be bought
   for (let i = 0; i < availableItems.length; i++) {
-    upgradeButtons[i].disabled = counter < availableItems[i].cost;
+    uiControls[i].disabled = counter < availableItems[i].cost;
   }
 
   requestAnimationFrame(update);
